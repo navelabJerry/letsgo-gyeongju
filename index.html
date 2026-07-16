@@ -369,29 +369,37 @@ const IMG_sc_mart = "data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDAAYE
 <script>
 /* ---------------- storage helpers ---------------- */
 async function sGet(key, shared){
-  try{
-    if(window.storage && typeof window.storage.get === "function"){
-      const r = await window.storage.get(key, shared);
-      return r? JSON.parse(r.value): null;
-    }
-  }catch(e){ /* fall through to local fallback */ }
+  if(shared){
+    try{
+      const res = await fetch("/api/kv/" + encodeURIComponent(key));
+      if(res.ok){
+        const data = await res.json();
+        if(data && data.value != null) return JSON.parse(data.value);
+        return null;
+      }
+    }catch(e){ /* fall through to local fallback */ }
+  }
   try{
     const v = localStorage.getItem("gjfallback:"+key);
     return v? JSON.parse(v): null;
   }catch(e){ return null; }
 }
 async function sSet(key, value, shared){
-  try{
-    if(window.storage && typeof window.storage.set === "function"){
-      return await window.storage.set(key, JSON.stringify(value), shared);
-    }
-  }catch(e){ /* fall through to local fallback */ }
+  if(shared){
+    try{
+      const res = await fetch("/api/kv/" + encodeURIComponent(key), {
+        method: "PUT",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({ value: JSON.stringify(value) })
+      });
+      if(res.ok) return {key, value};
+    }catch(e){ /* fall through to local fallback */ }
+  }
   try{
     localStorage.setItem("gjfallback:"+key, JSON.stringify(value));
     return {key, value};
   }catch(e){ console.error(e); return null; }
 }
-
 /* ---------------- constants ---------------- */
 const USERS = {
   "혜진": "#CADCAE",
