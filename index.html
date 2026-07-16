@@ -293,6 +293,15 @@
   .sc-facility-item{font-size:12px;color:var(--ink-soft);margin-top:2px;}
   .sc-facility-price{color:var(--accent-dark);font-weight:700;font-size:13px;margin-top:4px;}
   .sc-facility-detail{font-size:11.5px;color:var(--ink-soft);margin-top:4px;line-height:1.6;white-space:pre-line;}
+
+/* ---- mobile responsive fixes ---- */
+@media(max-width:860px){
+  main *, header * { min-width: 0; }
+}
+@media(max-width:700px){
+  .header-row1{grid-template-columns:1fr;justify-items:center;row-gap:6px;}
+  .user-badge{justify-self:center;flex-wrap:wrap;justify-content:center;text-align:center;}
+}
 </style>
 </head>
 <body>
